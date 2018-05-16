@@ -1,0 +1,28 @@
+.slider-buttons {
+    min-width: 50px;
+    margin: 143px auto 0 auto;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 60px;
+}
+
+.slider-buttons .is-active {
+    width: 14px;
+    height: 14px;
+    margin: 0 8px;
+    background-color: #fff;
+    border: none;
+    border-radius: 50%;
+    outline: none;
+}
+
+.slider-button {
+    width: 8px;
+    height: 8px;
+    margin: 3px 11px 4px 11px;
+    background-color: transparent;
+    border: 1px solid #999;
+    border-radius: 50%;
+    outline: none;
+}
