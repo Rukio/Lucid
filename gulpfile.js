@@ -1,4 +1,5 @@
 var gulp = require('gulp'),
+	imagemin = require('gulp-imagemin'),
     sass = require('gulp-sass'),
     bsync = require('browser-sync'),
     concat = require('gulp-concat'),
@@ -8,12 +9,17 @@ var gulp = require('gulp'),
     smartGrid = require('smart-grid'),
     rename = require('gulp-rename');
 
+	gulp.task('imagemin', function() {
+	return gulp.src('src/img/**/*')
+		.pipe(imagemin()) // Cache Images
+		.pipe(gulp.dest('dist/img')); 
+	});
+	
 gulp.task('sass', function() {
     return gulp.src('src/sass/**/*.+(scss|sass)')
     .pipe(sass().on('error', sass.logError))
     .pipe(gulp.dest('src/css'))
     .pipe(bsync.stream())
-    //.pipe(bsync.reload({stream: true}))
 });
 
 gulp.task('scripts', function() {
@@ -21,11 +27,12 @@ gulp.task('scripts', function() {
         'src/libs/jquery/dist/jquery.min.js',
         'src/js/googlemap.js',
         'src/js/slidie.js',
-        'src/js/navigation.js'
+        'src/js/navigation.js',
+        'src/js/main.js'
     ])
-    .pipe(concat('libs.min.js'))
+    .pipe(concat('scripts.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('src/js'));
+    .pipe(gulp.dest('dist/js'));
 });
 
 gulp.task('cssCompress', function() {
@@ -33,7 +40,8 @@ gulp.task('cssCompress', function() {
         'src/css/*.css'
 ])
     .pipe(cssnano())
-    .pipe(gulp.dest('src/css'));
+	.pipe(rename({suffix: '.min', prefix : ''}))
+    .pipe(gulp.dest('dist/css'));
 })
 
 gulp.task('bs', function() {
@@ -54,12 +62,31 @@ gulp.task('autoprefixer', () =>
         .pipe(gulp.dest('src/css'))
 );
 
-gulp.task('watch', ['bs', 'autoprefixer', 'scripts'], function() {
+gulp.task('watch', ['bs', 'autoprefixer'], function() {
     gulp.watch('src/**/*.+(sass|scss)', ['sass']);
     gulp.watch('src/*.html', bsync.reload);
     gulp.watch('src/js/**/*.js', bsync.reload);
-    //gulp.watch('src/css/**/*.css', bsync.reload);
-    //gulp.watch('src/css/**/*.css', ['cssCompress']);
+});
+
+gulp.task('build', ['imagemin', 'sass', 'scripts', 'cssCompress'], function() {
+
+	var buildFiles = gulp.src([
+		'src/*.html',
+		'src/.htaccess',
+		]).pipe(gulp.dest('dist'));
+
+	var buildCss = gulp.src([
+		'src/css/main.min.css',
+		]).pipe(gulp.dest('dist/css'));
+
+	var buildJs = gulp.src([
+		'src/js/scripts.min.js',
+		]).pipe(gulp.dest('dist/js'));
+
+	var buildFonts = gulp.src([
+		'src/fonts/**/*',
+		]).pipe(gulp.dest('dist/fonts'));
+
 });
 
 // var settings = {
